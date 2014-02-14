@@ -1,0 +1,32 @@
+
+<assembly>
+    <id />
+    <formats>
+        <format>tar</format>
+    </formats>
+
+    <fileSets>
+        <fileSet>
+            <directory>src/main/scripts/</directory>
+            <outputDirectory>/scripts/</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/config/</directory>
+            <outputDirectory>/config/</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <unpack>false</unpack>
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+</assembly>

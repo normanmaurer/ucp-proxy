@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/plugins/maven-changes-plugin/xsd/changes-1.0.0.xsd">
+    <properties>
+        <title>UCP client & server simulators - Release Notes</title>
+    </properties>
+        
+    <body>
+        <release version="1.0.0_RC1" date="2013-09-12" description="Project Skeleton" >
+            <action type="add" dev="a.bourgeois">[ADD] Project Skeleton</action>
+        </release>
+    </body>
+</document>

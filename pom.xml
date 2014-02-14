@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<name>${project.artifactId}</name>
+	<artifactId>ucp-proxy</artifactId>
+	<groupId>be.demmel.fun</groupId>
+	<version>1.0.0_RC1-SNAPSHOT</version>
+
+	<distributionManagement>
+		<!-- Needed by the site plugin -->
+		<site>
+			<id>site</id>
+			<name>site</name>
+			<url>file://tmp</url>
+		</site>
+		<!-- Needed by the release plugin -->
+		<repository>
+			<id>repo</id>
+			<name>repo</name>
+			<url>file://tmp</url>
+		</repository>
+	</distributionManagement>
+
+	<scm>
+		<!-- Used by the release plugin -->
+		<connection>scm:svn:https://TODO/trunk</connection>
+	</scm>
+
+	<properties>
+		<java.source>1.7</java.source>
+		<java.target>1.7</java.target>
+		<java.debug>true</java.debug>
+		<java.optimize>true</java.optimize>
+		<java.verbose>true</java.verbose>
+	</properties>
+
+	<dependencies>
+		<!-- SLF4J (+ LOGBack) for logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+		
+	<!-- END DEPENDENCIES FOR APACHE COMMONS CONFIGURATION -->
+
+		<!-- JUnit for testing -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Handles NIO -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.0.13.Final</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- Universal Computer Protocol -->
+		<dependency>
+			<groupId>be.demmel.protocol</groupId>
+			<artifactId>ucp</artifactId>
+			<version>1.0.0_RC2-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources/</directory>
+			</resource>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/config/</directory>
+				<targetPath>../config</targetPath>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>${java.source}</source>
+					<target>${java.target}</target>
+					<debug>${java.debug}</debug>
+					<optimize>${java.optimize}</optimize>
+					<verbose>${java.verbose}</verbose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<tagBase>https://TODO/tags</tagBase>
+					<!-- The goals must be set to deploy to avoid deploy-site running, which tries to deploy the site -->
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>1.5</version>
+				<configuration>
+					<connectionType>connection</connectionType>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>2.6</version>
+				<!-- The changes.xml fille will be searched in the default src/changes folder -->
+				<configuration />
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/src.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+
+			<!-- Allows Maven to launch this tool -->
+			<!-- example: mvn clean package exec:java -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<configuration>
+					<mainClass>be.demmel.fun.StartProxy</mainClass>
+					<systemProperties>
+						<systemProperty>
+							<key>logback.configurationFile</key>
+							<value>target/config/logback.groovy</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.4</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>summary</report>
+							<report>project-team</report>
+							<report>dependencies</report>
+							<report>dependency-convergence</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+
+</project>

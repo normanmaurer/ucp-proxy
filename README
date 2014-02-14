@@ -1,0 +1,7 @@
+<dependency>
+	<groupId>be.demmel.protocol</groupId>
+	<artifactId>ucp</artifactId>
+	<version>1.0.0_RC2-SNAPSHOT</version>
+</dependency>
+
+^this dependency has to be downloaded from https://github.com/AndrewBourgeois/UCP. Compile it and install it in your local repository before trying to compile this project.
