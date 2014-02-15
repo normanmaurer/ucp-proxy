@@ -153,7 +153,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.2.1</version>
 				<configuration>
-					<mainClass>be.demmel.fun.StartProxy</mainClass>
+					<mainClass>be.demmel.fun.Start${nodeType}</mainClass>
 					<systemProperties>
 						<systemProperty>
 							<key>logback.configurationFile</key>
