@@ -1,12 +1,14 @@
 package be.demmel.fun;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -20,11 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import be.demmel.protocol.ucp.UCPPacket;
-
-
 @Sharable
-public class FrontendHandler extends SimpleChannelInboundHandler<UCPPacket> {
+public class FrontendHandler extends ChannelInboundHandlerAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FrontendHandler.class);
 	private final SocketAddress remoteAddress;
 	private boolean authenticated;
@@ -66,7 +65,7 @@ public class FrontendHandler extends SimpleChannelInboundHandler<UCPPacket> {
 	}
 
 	@Override
-	protected void channelRead0(final ChannelHandlerContext ctx, UCPPacket ucpPacket) throws Exception {
+	public void channelRead(final ChannelHandlerContext ctx, Object ucpPacket) throws Exception {
 		MDC.put("channel", String.format("[id: 0x%08x]", ctx.channel().hashCode()));
 
 		if (!this.authenticated) {// authenticate the client
@@ -77,7 +76,7 @@ public class FrontendHandler extends SimpleChannelInboundHandler<UCPPacket> {
 		this.amountOfPDUsForwarded++;
 	}
 
-	private void forwardPacket(final ChannelHandlerContext ctx, UCPPacket ucpPacket) {
+	private void forwardPacket(final ChannelHandlerContext ctx, Object ucpPacket) {
 		if (outboundChannel.isActive()) {
 			outboundChannel.writeAndFlush(ucpPacket).addListener(new ChannelFutureListener() {
 				@Override
@@ -95,7 +94,7 @@ public class FrontendHandler extends SimpleChannelInboundHandler<UCPPacket> {
 		}
 	}
 
-	private void authenticate(final ChannelHandlerContext ctx, final UCPPacket ucpPacket) {
+	private void authenticate(final ChannelHandlerContext ctx, final Object ucpPacket) {
 		this.authenticated = true;// authentication against a database (= blocking) happens here
 
 		// connect to the gateway
@@ -103,7 +102,7 @@ public class FrontendHandler extends SimpleChannelInboundHandler<UCPPacket> {
 		Bootstrap b = new Bootstrap();
 		b.group(inboundChannel.eventLoop()).channel(ctx.channel().getClass())
 		// TODO: remove timeout as it's only done to count the amount of responses received and print that
-				.handler(new CommonUcpChannelInitializer(CommonStaticConfig.PACKET_SERIALIZER, CommonStaticConfig.PACKET_DESERIALIZER, 60000 /* ms */) {
+				.handler(new CommonUcpChannelInitializer(30000 /* ms */) {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
 						// no need for an inactivity check on this side of the proxy

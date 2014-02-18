@@ -13,22 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import be.demmel.protocol.ucp.serialization.UCPPacketDeserializerImpl;
-import be.demmel.protocol.ucp.serialization.UCPPacketSerializerImpl;
-
 public class CommonUcpChannelInitializer extends ChannelInitializer<SocketChannel> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommonUcpChannelInitializer.class);
-	private final UCPPacketDeserializerImpl ucpPacketDeserializer;
-	private final UCPPacketSerializerImpl ucpPacketSerializer;
 	private final int idleMillesecondsBeforeChannelClose;
 	
-	public CommonUcpChannelInitializer(UCPPacketSerializerImpl ucpPacketSerializer, UCPPacketDeserializerImpl ucpPacketDeserializer) {
-		this(ucpPacketSerializer, ucpPacketDeserializer, 0);
+	public CommonUcpChannelInitializer() {
+		this(0);
 	}
 	
-	public CommonUcpChannelInitializer(UCPPacketSerializerImpl ucpPacketSerializer, UCPPacketDeserializerImpl ucpPacketDeserializer, int idleMillesecondsBeforeChannelClose) {
-		this.ucpPacketDeserializer = ucpPacketDeserializer;
-		this.ucpPacketSerializer = ucpPacketSerializer;
+	public CommonUcpChannelInitializer(int idleMillesecondsBeforeChannelClose) {
 		this.idleMillesecondsBeforeChannelClose = idleMillesecondsBeforeChannelClose;
 	}
 	
@@ -42,7 +35,5 @@ public class CommonUcpChannelInitializer extends ChannelInitializer<SocketChanne
 		}
 		
 		pipeline.addLast("frameDecoder", new DelimiterBasedFrameDecoder(2048, false, true /* to avoid reading an infinite amount of bytes (when no delimiter was sent)*/, Unpooled.wrappedBuffer(new byte[]{0x03})));
-		pipeline.addLast("ucpPduDecoder", new UcpDecoder(ucpPacketDeserializer));
-		pipeline.addLast("packetEncoder", new UcpEncoder(ucpPacketSerializer));
 	}
 }

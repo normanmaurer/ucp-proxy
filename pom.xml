@@ -74,13 +74,6 @@
 			<version>4.0.13.Final</version>
 			<scope>compile</scope>
 		</dependency>
-
-		<!-- Universal Computer Protocol -->
-		<dependency>
-			<groupId>be.demmel.protocol</groupId>
-			<artifactId>ucp</artifactId>
-			<version>1.0.0_RC2-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 	<build>
 		<resources>

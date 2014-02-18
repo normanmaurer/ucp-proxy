@@ -39,14 +39,13 @@ public class StartClient {
 			EventLoopGroup group = null;
 			try {
 				group = new NioEventLoopGroup();
-				final AtomicInteger id = new AtomicInteger();
 				Bootstrap b = new Bootstrap().group(group).channel(NioSocketChannel.class);
-				b.handler(new CommonUcpChannelInitializer(CommonStaticConfig.PACKET_SERIALIZER, CommonStaticConfig.PACKET_DESERIALIZER, 60000 /* ms */) {
+				b.handler(new CommonUcpChannelInitializer(30000 /* ms */) {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
 						super.initChannel(ch);
 						ChannelPipeline pipeline = ch.pipeline();
-						pipeline.addLast(handlersExecutor, "ucpPduHandler", new ClientUcpHandler(AMOUNT_OF_MESSAGES_PER_CLIENT, id.incrementAndGet()));
+						pipeline.addLast(handlersExecutor, "ucpPduHandler", new ClientUcpHandler(AMOUNT_OF_MESSAGES_PER_CLIENT));
 					}
 				});
 

@@ -1,7 +1,10 @@
 package be.demmel.fun;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleStateEvent;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -9,22 +12,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import be.demmel.protocol.ucp.O_60_SessionManagement;
-import be.demmel.protocol.ucp.UCPOperationHeader;
-import be.demmel.protocol.ucp.UCPOperationType;
-import be.demmel.protocol.ucp.UCPPacket;
-
-public class ClientUcpHandler extends SimpleChannelInboundHandler<UCPPacket> {
+public class ClientUcpHandler extends SimpleChannelInboundHandler<ByteBuf> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClientUcpHandler.class);
 	private static final AtomicInteger numberOfResultsReceived = new AtomicInteger(); 
 	private int amountOfMessages;
 	private int amountOfResponsesReceived;
-	private final int clientId;
 	
-	public ClientUcpHandler(int amountOfMessages, int clientId) {
+	public ClientUcpHandler(int amountOfMessages) {
 		this.amountOfMessages = amountOfMessages;
-		this.clientId = clientId;
 	}
+	
+	@Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+		MDC.put("channel", String.format("[id: 0x%08x]",ctx.channel().hashCode()));
+    	if(evt instanceof IdleStateEvent) {
+    		LOGGER.error("Idle connection ({}). PDUs received: {}", ctx.channel().remoteAddress(), this.amountOfResponsesReceived);
+    	}
+    	super.userEventTriggered(ctx, evt);
+    }
 	
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
@@ -37,11 +42,7 @@ public class ClientUcpHandler extends SimpleChannelInboundHandler<UCPPacket> {
     	    	
     	for(int i = 0 ; i < amountOfMessages ; i++) {
     		LOGGER.debug("Sending UCP 60 message");
-        	UCPOperationHeader header = new UCPOperationHeader(123, UCPOperationHeader.Type.OPERATION, UCPOperationType.SESSION_MANAGEMENT);
-    		O_60_SessionManagement data = new O_60_SessionManagement("toto", '5', '6', '1', this.clientId+"", i+"", "0100", "opid12345678900123456789");
-    		UCPPacket ucpPacket = new UCPPacket(header, data);
-    		
-    		ctx.writeAndFlush(ucpPacket);
+    		ctx.writeAndFlush(Unpooled.copiedBuffer(new byte[]{0x02, 0x31, 0x32, 0x2f, 0x30, 0x30, 0x30, 0x36, 0x37, 0x2f, 0x4f, 0x2f, 0x36, 0x30, 0x2f, 0x74, 0x6f, 0x74, 0x6f, 0x2f, 0x35, 0x2f, 0x36, 0x2f, 0x31, 0x2f, 0x33, 0x31, 0x2f, 0x33, 0x30, 0x2f, 0x30, 0x31, 0x30, 0x30, 0x2f, 0x2f, 0x2f, 0x2f, 0x6f, 0x70, 0x69, 0x64, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2f, 0x2f, 0x42, 0x35, 0x03}));
         	
         	LOGGER.debug("UCP message sent");
     	}
@@ -55,7 +56,7 @@ public class ClientUcpHandler extends SimpleChannelInboundHandler<UCPPacket> {
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, UCPPacket ucpPacket) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, ByteBuf ucpPacket) throws Exception {
 		MDC.put("channel", String.format("[id: 0x%08x]",ctx.channel().hashCode()));
 		
 		this.amountOfResponsesReceived++;

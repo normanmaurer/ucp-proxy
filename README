@@ -1,6 +1,4 @@
-1) "git clone https://github.com/AndrewBourgeois/UCP.git"
-2) "mvn clean package install" this little dependency
-3) "mvn clean package exec:java -DnodeType=Server"
-4) "mvn clean package exec:java -DnodeType=Proxy"
-5) "mvn clean package exec:java -DnodeType=Client"
-6) if you don't get the issue with 3500 clients then change that value in the "StartClient" class (the AMOUNT_OF_CLIENTS variable).
+1) "mvn clean package exec:java -DnodeType=Server"
+2) "mvn clean package exec:java -DnodeType=Proxy"
+3) "mvn clean package exec:java -DnodeType=Client"
+4) if you don't get the issue with 3500 clients then add some in the "StartClient" class (the AMOUNT_OF_CLIENTS variable).

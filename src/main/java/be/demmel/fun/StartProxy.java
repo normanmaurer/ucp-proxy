@@ -35,8 +35,7 @@ public class StartProxy {
 
 			try {
 				ServerBootstrap b = new ServerBootstrap();
-				b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(new CommonUcpChannelInitializer(CommonStaticConfig.PACKET_SERIALIZER,
-						CommonStaticConfig.PACKET_DESERIALIZER, 60000 /* ms */) {
+				b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(new CommonUcpChannelInitializer(30000 /* ms */) {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {						
 						//TODO: connect timeout when connecting to backend
