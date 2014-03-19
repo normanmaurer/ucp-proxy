@@ -14,7 +14,6 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +22,9 @@ import org.slf4j.MDC;
 public class StartClient {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StartClient.class);
 	private static final SocketAddress serverAddress = new InetSocketAddress("127.0.0.1", 7201);// proxy
-	//private static final SocketAddress serverAddress = new InetSocketAddress("127.0.0.1", 7900);// server
 	private static final EventExecutorGroup handlersExecutor = new DefaultEventExecutorGroup(10); // packet handling should happen outside of the pool that
 																									// handles IOs
-	private static final int AMOUNT_OF_CLIENTS = 3500, AMOUNT_OF_MESSAGES_PER_CLIENT = 500;
+	private static final int AMOUNT_OF_CLIENTS = 4000, AMOUNT_OF_MESSAGES_PER_CLIENT = 500;
 
 	public static void main(String... args) {
 		Thread.currentThread().setName("Startup");

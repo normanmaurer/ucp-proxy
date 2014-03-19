@@ -46,7 +46,7 @@ public class BackendHandler extends ChannelInboundHandlerAdapter {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                	ctx.channel().read();//FIXME: same as frontend: multiple PDUs could be read in a single read.
+                	ctx.channel().read();
                     amountOfPDUsForwardedSuccess++;
                 } else {
                     future.channel().close();

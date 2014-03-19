@@ -1,7 +1,6 @@
 package be.demmel.fun;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -11,7 +10,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -101,7 +99,7 @@ public class FrontendHandler extends ChannelInboundHandlerAdapter {
 		final Channel inboundChannel = ctx.channel();
 		Bootstrap b = new Bootstrap();
 		b.group(inboundChannel.eventLoop()).channel(ctx.channel().getClass())
-		// TODO: remove timeout as it's only done to count the amount of responses received and print that
+		// TODO: remove timeout as it's only done to count and print the amount of responses received
 				.handler(new CommonUcpChannelInitializer(30000 /* ms */) {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {

@@ -13,8 +13,6 @@ import org.slf4j.MDC;
 public class ServerUcpHandler extends SimpleChannelInboundHandler<ByteBuf> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerUcpHandler.class);
 	private int amountOfPDUsSentBack;
-	private String clientId;
-	private int currentMessage;
 	private int amountOfPDUsReceived;
 	
 	@Override
